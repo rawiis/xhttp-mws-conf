@@ -63,7 +63,7 @@ mkdir -p /opt/remnanode && cd /opt/remnanode
   },
   "inbounds": [
     {
-      "tag": "XHTTP_mws",
+      "tag": "WS_mws",
       "port": 8443,
       "listen": "0.0.0.0",
       "protocol": "vless",
@@ -72,17 +72,12 @@ mkdir -p /opt/remnanode && cd /opt/remnanode
         "fallbacks": [],
         "decryption": "none"
       },
-      "sniffing": {
-        "enabled": true,
-        "destOverride": [
-          "http",
-          "tls",
-          "quic"
-        ]
-      },
       "streamSettings": {
-        "network": "xhttp",
+        "network": "ws",
         "security": "tls",
+        "wsSettings": {
+          "path": "/xhttppath"
+        },
         "tlsSettings": {
           "minVersion": "1.2",
           "certificates": [
@@ -92,10 +87,6 @@ mkdir -p /opt/remnanode && cd /opt/remnanode
             }
           ],
           "rejectUnknownSni": false
-        },
-        "xhttpSettings": {
-          "mode": "auto",
-          "path": "/xhttppath"
         }
       }
     }
@@ -114,7 +105,6 @@ mkdir -p /opt/remnanode && cd /opt/remnanode
     "rules": []
   }
 }
-
 ```
 
 *Примечание: Директива `"rejectUnknownSni": false` критически важна для приема запросов с кастомным SNI, прошедших сквозь облако МТС.*
@@ -215,11 +205,12 @@ docker compose up -d
 
 1. Перейдите во вкладку **«Основное»**:
 * Источник: `https://node.yourdomain.com:443` *(ваш домен).*
-* Изменить заголовок Host: **ВЫКЛЮЧЕНО**.
+* Изменить заголовок Host: **ВКЛЮЧЕНО**:
+* Заголовок: node.yourdomain.com
 
 
 2. Перейдите во вкладку **«Оптимизация»**:
-* WebSocket: **ВЫКЛЮЧЕНО** *(так как мы используем протокол XHTTP/HTTP2).*
+* WebSocket: **ВКЛЮЧЕНО**
 
 
 
@@ -230,7 +221,7 @@ docker compose up -d
 Создайте или отредактируйте Хост в панели администратора для генерации правильных клиентских подписок:
 
 * **Вкладка «Основные»:**
-* Адрес: `topxxxxxxxxxx.mwscdn.ru` *(Технический домен CDN для обхода белых списков ТСПУ).*
+* Адрес: `topxxxxxxxxxx.mwscdn.ru` *(Технический домен CDN).*
 * Порт: `443`
 
 
@@ -240,4 +231,4 @@ docker compose up -d
 * Хост: *Оставить абсолютно пустым.*
 * Путь: /xhttppath
 * Security Layer: **TLS**
-* ALPN: **h2** *(Обязательно для активации HTTP/2 потока в клиентах).*
+* ALPN: **пусто**
